@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: bill-test
+  annotations:
+    # nginx ingress
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    # cert-manager
+    ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: clusterissuer-letsencrypt-production
+    # CORS
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: ""
+
+spec:
+  rules:
+  - host: bill-test-api.onboarding.dev
+    http:
+      paths:
+        - path: /(.*)
+          backend:
+            serviceName: bill-test
+            servicePort: http
+  tls:
+  - hosts:
+    - bill-test-api.onboarding.dev
+    secretName: bill-test-tls-secret
